@@ -4,15 +4,33 @@ pygame.init()
 
 screen = pygame.display.set_mode((1200, 800))
 pygame.mouse.set_visible(False)
-x2, y2 = 0,0
 
 class Dot:
     def __init__(self, x, y):
         self.x = x
         self.y = y
+        self.color = (158, 69, 72)
+        self.borderColor = (80, 80, 80)
+        self.constraint = constraint
+        self.radius = radius
 
-    def AngleToDot(self, x2, xy):
-        return math.atan2(y2-self.y, x2-self.x)
+    def ConstrainToDot(self, dot):
+        angle = math.atan2(self.y-dot.y, self.x-dot.x)
+        self.x = dot.x + self.constraint * math.cos(angle)
+        self.y = dot.y + self.constraint * math.sin(angle)
+
+    def Draw(self):
+        pygame.draw.circle(screen, self.color, (self.x, self.y), self.radius)
+
+    def DrawConstraint(self):
+        pygame.draw.circle(screen, self.borderColor, (self.x, self.y), self.constraint, 2)
+
+# Initialize Spines
+constraint = 50
+radius = 10
+spines = []
+for _ in range(15):
+    spines.append(Dot(0, 0))
 
 running = True
 while running:
@@ -24,18 +42,17 @@ while running:
     screen.fill((213,211,211))
 
     # Head
-    x1, y1 = pygame.mouse.get_pos()
-    pygame.draw.circle(screen, (158,69,72), (x1, y1), 10)
-    pygame.draw.circle(screen, (80,80,80), (x1, y1), 50, 2)
+    x, y = pygame.mouse.get_pos()
+    spines[0].x = x
+    spines[0].y = y
+    spines[0].Draw()
+    spines[0].DrawConstraint()
 
-
-    # Find the angle from Head to Spine
-    angle = math.atan2(y2-y1, x2-x1)
-    # Find new position
-    x2 = x1 + 50 * math.cos(angle)
-    y2 = y1 + 50 * math.sin(angle)
-    # Draw Spine
-    pygame.draw.circle(screen, (158,69,72), (x2, y2), 10)
+    # Spine
+    for i in range(1, len(spines)):
+        spines[i].ConstrainToDot(spines[i - 1])
+        spines[i].Draw()
+        #spines[i].DrawConstraint()
 
     # Update display
     pygame.display.flip() 

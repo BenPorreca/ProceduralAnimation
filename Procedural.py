@@ -20,7 +20,7 @@ class Dot:
         self.y = dot.y + self.constraint * math.sin(angle)
 
     def Draw(self):
-        pygame.draw.circle(screen, self.color, (self.x, self.y), self.radius)
+        pygame.draw.circle(screen, self.color, (self.x, self.y), self.radius, 4)
 
     def DrawConstraint(self):
         pygame.draw.circle(screen, self.borderColor, (self.x, self.y), self.constraint, 2)
@@ -29,8 +29,11 @@ class Dot:
 constraint = 50
 radius = 10
 spines = []
+size = [52, 58, 40, 60, 68, 71, 65, 50, 28, 15, 11, 9, 7, 7, 7]
 for _ in range(15):
     spines.append(Dot(0, 0))
+for i in range(len(spines)):
+    spines[i].radius = size[i]
 
 running = True
 while running:
@@ -46,7 +49,7 @@ while running:
     spines[0].x = x
     spines[0].y = y
     spines[0].Draw()
-    spines[0].DrawConstraint()
+    #spines[0].DrawConstraint()
 
     # Spine
     for i in range(1, len(spines)):
